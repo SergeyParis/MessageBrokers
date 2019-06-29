@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -26,10 +28,7 @@ namespace Infrastructure.Brokers
 
         public void PublishMessage(string message, string queue = DefaultChannelName)
         {
-            if (queue != DefaultChannelName)
-                throw new NotImplementedException();
-
-            var channel = _channels.First();
+            var channel = GetChannel(queue);
 
             var body = Encoding.UTF8.GetBytes(message);
             channel.BasicPublish(exchange: "", queue, null, body);
@@ -37,10 +36,7 @@ namespace Infrastructure.Brokers
 
         public void SubscribeOnQueue(Action<object, BasicDeliverEventArgs> handler, string queue = DefaultChannelName)
         {
-            if (queue != DefaultChannelName)
-                throw new NotImplementedException();
-
-            var channel = _channels.First();
+            var channel = GetChannel(queue);
 
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, args) => handler(model, args);
@@ -48,6 +44,28 @@ namespace Infrastructure.Brokers
             channel.BasicConsume(queue: queue, autoAck: true, consumer: consumer);
         }
 
+        public byte[] WaitMessageFromQueue(string queue = DefaultChannelName)
+        {
+            var channel = GetChannel(queue);
+            var consumer = new EventingBasicConsumer(channel);
+            
+            EventWaitHandle waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
+
+            var message = new byte[0];
+            consumer.Received += (model, args) =>
+            {
+                waitHandle.Set();
+                message = args.Body;
+            };
+
+            waitHandle.WaitOne();
+            return message;
+        }
+
+        public Task<string> WaitMessageFromQueueAsync(string queue = DefaultChannelName)
+        {
+            return null;
+        }
 
         public void Dispose()
         {
@@ -64,6 +82,14 @@ namespace Infrastructure.Brokers
             _channels.Add(channel);
 
             channel.QueueDeclare(queue: channelName, false, false, false, null);
+        }
+
+        private IModel GetChannel(string queueName)
+        {
+            if (queueName != DefaultChannelName)
+                throw new NotImplementedException();
+
+            return _channels.First();
         }
     }
 }
