@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Text;
+using Infrastructure;
 using Infrastructure.Brokers;
 
 namespace Application2
@@ -10,13 +10,15 @@ namespace Application2
         {
             
             var rabbit = new RabbitMqClient(); 
-            rabbit.SubscribeOnQueue((model, arg) =>
-            {
-                var body = arg.Body;
-                var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine(message);
-            });
+//            rabbit.SubscribeOnQueue((model, arg) =>
+//            {
+//                var body = arg.Body;
+//                Console.WriteLine(body.TransformToString());
+//            });
 
+            var result = rabbit.WaitMessageFromQueue();
+            Console.WriteLine(result.TransformToString());
+            
             Console.ReadKey();
         }
     }

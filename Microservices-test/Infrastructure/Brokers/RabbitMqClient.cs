@@ -26,11 +26,9 @@ namespace Infrastructure.Brokers
             CreateDefaultChannel();
         }
 
-        public void PublishMessage(string message, string queue = DefaultChannelName)
+        public void PublishMessage(byte[] body, string queue = DefaultChannelName)
         {
             var channel = GetChannel(queue);
-
-            var body = Encoding.UTF8.GetBytes(message);
             channel.BasicPublish(exchange: "", queue, null, body);
         }
 

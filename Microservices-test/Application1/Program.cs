@@ -1,4 +1,5 @@
 ﻿using System;
+using Infrastructure;
 using Infrastructure.Brokers;
 
 namespace Application1
@@ -8,7 +9,7 @@ namespace Application1
         static void Main(string[] args)
         {
             var rabbit = new RabbitMqClient(); 
-            rabbit.PublishMessage("hello app2");
+            rabbit.PublishMessage("hello app2".TransformToByte());
             
             Console.ReadKey();
         }
