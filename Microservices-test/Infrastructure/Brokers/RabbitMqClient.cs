@@ -45,19 +45,15 @@ namespace Infrastructure.Brokers
         public byte[] WaitMessageFromQueue(string queue = DefaultChannelName)
         {
             var channel = GetChannel(queue);
-            var consumer = new EventingBasicConsumer(channel);
             
-            EventWaitHandle waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
-
-            var message = new byte[0];
-            consumer.Received += (model, args) =>
+            BasicGetResult result = null;
+            while (result == null)
             {
-                waitHandle.Set();
-                message = args.Body;
-            };
+                result = channel.BasicGet(queue, false);
+                Thread.Sleep(50);
+            }
 
-            waitHandle.WaitOne();
-            return message;
+            return result.Body;
         }
 
         public Task<string> WaitMessageFromQueueAsync(string queue = DefaultChannelName)

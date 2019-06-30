@@ -19,7 +19,7 @@ namespace Application2
             var result = rabbit.WaitMessageFromQueue();
             Console.WriteLine(result.TransformToString());
             
-            Console.ReadKey();
+//            Console.ReadKey();
         }
     }
 }
