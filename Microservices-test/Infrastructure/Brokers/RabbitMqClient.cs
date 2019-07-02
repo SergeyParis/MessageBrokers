@@ -29,7 +29,7 @@ namespace Infrastructure.Brokers
         public void PublishMessage(byte[] body, string queue = DefaultChannelName)
         {
             var channel = GetChannel(queue);
-            channel.BasicPublish(exchange: "", queue, null, body);
+            channel.BasicPublish("", queue, null, body);
         }
 
         public void SubscribeOnQueue(Action<object, BasicDeliverEventArgs> handler, string queue = DefaultChannelName)
@@ -75,7 +75,7 @@ namespace Infrastructure.Brokers
             var channel = _connection.CreateModel();
             _channels.Add(channel);
 
-            channel.QueueDeclare(queue: channelName, false, false, false, null);
+            channel.QueueDeclare(channelName, false, false, false, null);
         }
 
         private IModel GetChannel(string queueName)
