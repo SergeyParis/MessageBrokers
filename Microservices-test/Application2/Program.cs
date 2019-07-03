@@ -1,6 +1,7 @@
 ﻿using System;
 using Infrastructure;
 using Infrastructure.Brokers;
+using Infrastructure.Brokers.RabbitMq;
 
 namespace Application2
 {
