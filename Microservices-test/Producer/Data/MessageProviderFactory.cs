@@ -11,6 +11,7 @@ namespace Producer.Data
             {
                 case ProviderType.Hardcode: return new HardcodeMessageProvider();
                 case ProviderType.Console: return new ConsoleMessageProvider();
+                case ProviderType.Array: return new ArrayMessageProvider();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
@@ -20,6 +21,7 @@ namespace Producer.Data
     public enum ProviderType
     {
         Console,
-        Hardcode
+        Hardcode,
+        Array
     }
 }

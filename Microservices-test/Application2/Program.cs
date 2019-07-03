@@ -17,12 +17,12 @@ namespace Application2
                 Console.WriteLine(body.TransformToString());
             });
 
-            Console.WriteLine("ads");
+            Console.WriteLine("=========");
             
-//            var result = rabbit.WaitMessageFromQueue();
-//            Console.WriteLine(result.TransformToString());
-//            
-//            Console.ReadKey();
+            var result = rabbit.WaitMessageFromQueue();
+            Console.WriteLine(result.TransformToString());
+            
+            Console.ReadKey();
         }
     }
 }

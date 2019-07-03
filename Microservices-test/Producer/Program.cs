@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Threading;
 using Infrastructure;
-using Infrastructure.Brokers;
 using Infrastructure.Brokers.RabbitMq;
+using Producer.Data;
 
 namespace Producer
 {
@@ -9,12 +10,27 @@ namespace Producer
     {
         static void Main(string[] args)
         {
+            var messageProvider = MessageProviderFactory.GetProvider(ProviderType.Array);
+
+            var data = new []
+            {
+                "First message.", 
+                "Second message..", 
+                "Third message...", 
+                "Fourth message....", 
+                "Fifth message....."
+            };
+            
             while (true)
             {
-                var rabbit = new RabbitMqClient(); 
-                rabbit.PublishMessage("hello app2-1".TransformToByte());
+                var rabbit = new RabbitMqClient();
 
-                Console.ReadKey();
+                var message = messageProvider.GetMessage(data);
+                
+                Console.WriteLine($"Publish: {message}");
+                rabbit.PublishMessage(message.TransformToByte());
+                
+                Thread.Sleep(300);
             }
         }
     }
