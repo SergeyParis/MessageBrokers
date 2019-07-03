@@ -8,10 +8,13 @@ namespace Application1
     {
         static void Main(string[] args)
         {
-            var rabbit = new RabbitMqClient(); 
-            rabbit.PublishMessage("hello app2-1".TransformToByte());
+            while (true)
+            {
+                var rabbit = new RabbitMqClient(); 
+                rabbit.PublishMessage("hello app2-1".TransformToByte());
             
-//            Console.ReadKey();
+                Console.ReadKey();
+            }
         }
     }
 }

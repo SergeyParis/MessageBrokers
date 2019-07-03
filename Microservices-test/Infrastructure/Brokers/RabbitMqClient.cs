@@ -39,7 +39,7 @@ namespace Infrastructure.Brokers
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, args) => handler(model, args);
 
-            channel.BasicConsume(queue: queue, autoAck: true, consumer: consumer);
+            channel.BasicConsume(queue, true, consumer);
         }
 
         public byte[] WaitMessageFromQueue(string queue = DefaultChannelName)
@@ -49,16 +49,11 @@ namespace Infrastructure.Brokers
             BasicGetResult result = null;
             while (result == null)
             {
-                result = channel.BasicGet(queue, false);
+                result = channel.BasicGet(queue, true);
                 Thread.Sleep(50);
             }
 
             return result.Body;
-        }
-
-        public Task<string> WaitMessageFromQueueAsync(string queue = DefaultChannelName)
-        {
-            return null;
         }
 
         public void Dispose()
