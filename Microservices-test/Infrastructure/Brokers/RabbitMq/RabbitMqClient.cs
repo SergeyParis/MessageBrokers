@@ -14,6 +14,8 @@ namespace Infrastructure.Brokers.RabbitMq
         private readonly IConnection _connection;
         private readonly List<IModel> _channels;
 
+        public bool AutoAck { get; set; } = true;
+
         public RabbitMqClient(string host = "localhost")
         {
             _channels = new List<IModel>();
@@ -37,7 +39,13 @@ namespace Infrastructure.Brokers.RabbitMq
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, args) => handler(model, args);
 
-            channel.BasicConsume(queue, true, consumer);
+            channel.BasicConsume(queue, AutoAck, consumer);
+        }
+
+        public void Ack(BasicDeliverEventArgs args, string queue = DefaultChannelName)
+        {
+            var channel = GetChannel(queue);
+            channel.BasicAck(args.DeliveryTag, false);
         }
 
         public byte[] WaitMessageFromQueue(string queue = DefaultChannelName)
@@ -47,7 +55,7 @@ namespace Infrastructure.Brokers.RabbitMq
             BasicGetResult result = null;
             while (result == null)
             {
-                result = channel.BasicGet(queue, true);
+                result = channel.BasicGet(queue, AutoAck);
                 Thread.Sleep(50);
             }
 

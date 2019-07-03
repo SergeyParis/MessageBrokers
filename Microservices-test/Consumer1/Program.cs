@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using Infrastructure;
-using Infrastructure.Brokers;
 using Infrastructure.Brokers.RabbitMq;
 
 namespace Consumer1
@@ -12,7 +11,10 @@ namespace Consumer1
         {
             Console.WriteLine("start c1");
             
-            var rabbit = new RabbitMqClient();
+            var rabbit = new RabbitMqClient
+            {
+                AutoAck = false
+            };
 
             rabbit.SubscribeOnQueue((model, arg) =>
             {
@@ -22,12 +24,9 @@ namespace Consumer1
                 Thread.Sleep(dots * 1000);
                 
                 Console.WriteLine($" [{message}] Done");
+                
+                rabbit.Ack(arg);
             });
-
-            // var result = rabbit.WaitMessageFromQueue();
-            // Console.WriteLine(result.TransformToString());
-            
-            // rabbit.Dispose();
         }
     }
 }

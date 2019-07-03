@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Infrastructure;
 using Infrastructure.Brokers.RabbitMq;
@@ -10,22 +11,12 @@ namespace Producer
     {
         static void Main(string[] args)
         {
-            var messageProvider = MessageProviderFactory.GetProvider(ProviderType.Array);
-
-            var data = new []
-            {
-                "First message.", 
-                "Second message..", 
-                "Third message...", 
-                "Fourth message....", 
-                "Fifth message....."
-            };
+            var messageProvider = MessageProviderFactory.GetProvider(ProviderType.Numbers);
+            var rabbit = new RabbitMqClient();
             
             while (true)
             {
-                var rabbit = new RabbitMqClient();
-
-                var message = messageProvider.GetMessage(data);
+                var message = messageProvider.GetMessage();
                 
                 Console.WriteLine($"Publish: {message}");
                 rabbit.PublishMessage(message.TransformToByte());

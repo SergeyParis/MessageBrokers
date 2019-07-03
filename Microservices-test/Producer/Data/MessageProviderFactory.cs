@@ -22,6 +22,7 @@ namespace Producer.Data
     {
         Console,
         Hardcode,
-        Array
+        Array,
+        Numbers
     }
 }
