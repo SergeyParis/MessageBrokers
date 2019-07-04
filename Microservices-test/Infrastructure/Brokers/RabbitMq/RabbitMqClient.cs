@@ -69,14 +69,14 @@ namespace Infrastructure.Brokers.RabbitMq
                 channel.Dispose();
         }
 
-        private void CreateDefaultChannel() => CreateChannel(DefaultChannelName);
+        private void CreateDefaultChannel() => CreateChannelWithQueue(DefaultChannelName);
 
-        private void CreateChannel(string channelName)
+        private void CreateChannelWithQueue(string queueName)
         {
             var channel = _connection.CreateModel();
             _channels.Add(channel);
 
-            channel.QueueDeclare(channelName, false, false, false, null);
+            CreateQueue(queueName, channel);
         }
 
         private IModel GetChannel(string queueName)
@@ -85,6 +85,11 @@ namespace Infrastructure.Brokers.RabbitMq
                 throw new NotImplementedException();
 
             return _channels.First();
+        }
+
+        private void CreateQueue(string name, IModel channel, bool isDurable = false)
+        {
+            channel.QueueDeclare(name, isDurable, false, false, null);
         }
     }
 }
