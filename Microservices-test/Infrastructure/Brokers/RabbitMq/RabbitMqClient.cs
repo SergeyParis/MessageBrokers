@@ -10,10 +10,8 @@ namespace Infrastructure.Brokers.RabbitMq
 {
     public class RabbitMqClient : IDisposable
     {
-        private const string DefaultChannelName = "Default";
-
         private readonly IConnection _connection;
-        private readonly List<IModel> _channels;
+        private readonly Dictionary<string, IModel> _channels;
 
         public bool AutoAck { get; set; } = true;
 
@@ -22,7 +20,7 @@ namespace Infrastructure.Brokers.RabbitMq
 
         public RabbitMqClient(string host = "localhost")
         {
-            _channels = new List<IModel>();
+            _channels = new Dictionary<string, IModel>();
             ChannelConfig = new ChannelConfig
             {
                 PrefetchSize = 0,
@@ -35,40 +33,37 @@ namespace Infrastructure.Brokers.RabbitMq
             
             var factory = new ConnectionFactory {HostName = host};
             _connection = factory.CreateConnection();
-
-            CreateDefaultChannel();
         }
 
-        public void PublishMessage(byte[] body, string queue = DefaultChannelName)
+        public void PublishMessage(byte[] body, string routingKey)
         {
-            var channel = GetChannel(queue);
-            channel.BasicPublish("", queue, null, body);
+            GetChannel().BasicPublish("", routingKey, null, body);
         }
 
-        public void SubscribeOnQueue(Action<object, BasicDeliverEventArgs> handler, string queue = DefaultChannelName)
+        public void SubscribeOnQueue(Action<object, BasicDeliverEventArgs> handler, string queueName)
         {
-            var channel = GetChannel(queue);
+            var channel = GetChannel();
 
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, args) => handler(model, args);
 
-            channel.BasicConsume(queue, AutoAck, consumer);
+            channel.BasicConsume(queueName, AutoAck, consumer);
         }
 
-        public void Ack(BasicDeliverEventArgs args, string queue = DefaultChannelName)
+        public void Ack(BasicDeliverEventArgs args)
         {
-            var channel = GetChannel(queue);
+            var channel = GetChannel();
             channel.BasicAck(args.DeliveryTag, false);
         }
 
-        public byte[] WaitMessageFromQueue(string queue = DefaultChannelName)
+        public byte[] WaitMessageFromQueue(string queueName)
         {
-            var channel = GetChannel(queue);
+            var channel = GetChannel();
 
             BasicGetResult result = null;
             while (result == null)
             {
-                result = channel.BasicGet(queue, AutoAck);
+                result = channel.BasicGet(queueName, AutoAck);
                 Thread.Sleep(50);
             }
 
@@ -79,35 +74,33 @@ namespace Infrastructure.Brokers.RabbitMq
         {
             _connection?.Dispose();
             foreach (var channel in _channels)
-                channel.Dispose();
+                channel.Value.Dispose();
         }
-
-        private void CreateDefaultChannel() => CreateChannelWithQueue(DefaultChannelName);
-
-        private void CreateChannelWithQueue(string queueName)
+        
+        private IModel GetChannel()
         {
-            var channel = _connection.CreateModel();
-            _channels.Add(channel);
+            // channel - program connection to Rabbit MQ (new channel must create for new threads)
+            // auto-create new channel for every new thread
+            var channelName = Thread.CurrentThread.ManagedThreadId.ToString();
+            IModel channel;
 
-            CreateQueue(queueName, channel);
-        }
-
-        private IModel GetChannel(string queueName)
-        {
-            if (queueName != DefaultChannelName)
-                throw new NotImplementedException();
-
-            var channel = _channels.First();
+            if (_channels.Any(x => x.Key == channelName))
+                channel = _channels[channelName];
+            else
+            {
+                channel = _connection.CreateModel();
+                _channels.Add(channelName, channel);
+            }
+            
             ConfigureChannel(channel);
-
             return channel;
         }
 
-        private void CreateQueue(string name, IModel channel)
+        public void CreateQueue(string queueName, IModel channel)
         {
-            channel.QueueDeclare(name, QueueConfig.IsDurable, false, false, null);
+            channel.QueueDeclare(queueName, QueueConfig.IsDurable, false, false, null);
         }
-
+        
         private void ConfigureChannel(IModel channel)
         {
             channel.BasicQos(0, (ushort) ChannelConfig.PrefetchCount, false);
