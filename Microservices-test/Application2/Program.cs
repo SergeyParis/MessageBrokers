@@ -20,7 +20,7 @@ namespace Application2
 
             Console.WriteLine("=========");
             
-            var result = rabbit.WaitMessageFromQueue();
+            var result = rabbit.WaitMessageFromQueue(QueueName);
             Console.WriteLine(result.TransformToString());
             
             Console.ReadKey();
