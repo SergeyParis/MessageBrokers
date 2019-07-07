@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Infrastructure.Brokers.RabbitMq.Config;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -16,10 +17,22 @@ namespace Infrastructure.Brokers.RabbitMq
 
         public bool AutoAck { get; set; } = true;
 
+        public ChannelConfig ChannelConfig { get; set; }
+        public QueueConfig QueueConfig { get; set; }
+
         public RabbitMqClient(string host = "localhost")
         {
             _channels = new List<IModel>();
-
+            ChannelConfig = new ChannelConfig
+            {
+                PrefetchSize = 0,
+                PrefetchCount = 1
+            };
+            QueueConfig = new QueueConfig
+            {
+                IsDurable = false
+            };
+            
             var factory = new ConnectionFactory {HostName = host};
             _connection = factory.CreateConnection();
 
@@ -51,7 +64,7 @@ namespace Infrastructure.Brokers.RabbitMq
         public byte[] WaitMessageFromQueue(string queue = DefaultChannelName)
         {
             var channel = GetChannel(queue);
-            
+
             BasicGetResult result = null;
             while (result == null)
             {
@@ -84,12 +97,20 @@ namespace Infrastructure.Brokers.RabbitMq
             if (queueName != DefaultChannelName)
                 throw new NotImplementedException();
 
-            return _channels.First();
+            var channel = _channels.First();
+            ConfigureChannel(channel);
+
+            return channel;
         }
 
-        private void CreateQueue(string name, IModel channel, bool isDurable = false)
+        private void CreateQueue(string name, IModel channel)
         {
-            channel.QueueDeclare(name, isDurable, false, false, null);
+            channel.QueueDeclare(name, QueueConfig.IsDurable, false, false, null);
+        }
+
+        private void ConfigureChannel(IModel channel)
+        {
+            channel.BasicQos(0, (ushort) ChannelConfig.PrefetchCount, false);
         }
     }
 }
