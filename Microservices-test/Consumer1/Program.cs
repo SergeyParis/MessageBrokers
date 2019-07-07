@@ -17,7 +17,8 @@ namespace Consumer1
             {
                 AutoAck = false
             };
-
+            rabbit.CreateQueue(QueueName);
+            
             rabbit.SubscribeOnQueue((model, arg) =>
             {
                 var message = arg.Body.TransformToString();

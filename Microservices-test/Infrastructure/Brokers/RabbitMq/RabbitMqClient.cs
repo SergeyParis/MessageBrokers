@@ -70,6 +70,11 @@ namespace Infrastructure.Brokers.RabbitMq
             return result.Body;
         }
 
+        public void CreateQueue(string queueName)
+        {
+            GetChannel().QueueDeclare(queueName, QueueConfig.IsDurable, false, false, null);
+        }
+        
         public void Dispose()
         {
             _connection?.Dispose();
@@ -96,11 +101,6 @@ namespace Infrastructure.Brokers.RabbitMq
             return channel;
         }
 
-        public void CreateQueue(string queueName, IModel channel)
-        {
-            channel.QueueDeclare(queueName, QueueConfig.IsDurable, false, false, null);
-        }
-        
         private void ConfigureChannel(IModel channel)
         {
             channel.BasicQos(0, (ushort) ChannelConfig.PrefetchCount, false);

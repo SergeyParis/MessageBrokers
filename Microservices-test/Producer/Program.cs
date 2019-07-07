@@ -16,6 +16,8 @@ namespace Producer
             var messageProvider = MessageProviderFactory.GetProvider(ProviderType.Numbers);
             var rabbit = new RabbitMqClient();
             
+            rabbit.CreateQueue(QueueName);
+            
             while (true)
             {
                 var message = messageProvider.GetMessage();
