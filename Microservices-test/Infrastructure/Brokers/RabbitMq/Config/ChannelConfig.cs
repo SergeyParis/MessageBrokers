@@ -1,6 +1,6 @@
 namespace Infrastructure.Brokers.RabbitMq.Config
 {
-    public class ChannelConfig
+    public struct ChannelConfig
     {
         /// <summary>
         /// Mark that ack will send directly after getting a message from the queue (without manual ack)

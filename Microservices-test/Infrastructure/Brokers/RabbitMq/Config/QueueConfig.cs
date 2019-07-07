@@ -1,6 +1,6 @@
 namespace Infrastructure.Brokers.RabbitMq.Config
 {
-    public class QueueConfig
+    public struct QueueConfig
     {
         /// <summary>
         /// Resistant to Rabbit MQ Failures (Save messages to drive)

@@ -18,7 +18,7 @@ namespace Infrastructure.Brokers.RabbitMq
         private ChannelConfig _channelConfig;
         private QueueConfig _defaultQueueConfig;
 
-        public RabbitMqClient(string host = LocalHostName, ChannelConfig channelConfig = null)
+        public RabbitMqClient(string host = LocalHostName, ChannelConfig? channelConfig = null)
         {
             _channels = new Dictionary<string, ChannelInfo>();
             InitConfig(channelConfig);
@@ -63,7 +63,7 @@ namespace Infrastructure.Brokers.RabbitMq
             return result.Body;
         }
 
-        public void CreateQueue(string queueName, QueueConfig queueConfig = null)
+        public void CreateQueue(string queueName, QueueConfig? queueConfig = null)
         {
             var channel = GetChannelInfo().Channel;
             var config = queueConfig ?? _defaultQueueConfig;
@@ -77,7 +77,7 @@ namespace Infrastructure.Brokers.RabbitMq
                 channel.Value.Channel.Dispose();
         }
         
-        private ChannelInfo GetChannelInfo(ChannelConfig channelConfig = null)
+        private ChannelInfo GetChannelInfo()
         {
             // channel - program connection to Rabbit MQ (new channel must create for new threads)
             // auto-create new channel for every new thread
@@ -101,7 +101,7 @@ namespace Infrastructure.Brokers.RabbitMq
             return channel;
         }
 
-        private void InitConfig(ChannelConfig channelConfig)
+        private void InitConfig(ChannelConfig? channelConfig)
         {
             _channelConfig = channelConfig ?? new ChannelConfig
             {
