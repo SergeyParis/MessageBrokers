@@ -13,23 +13,16 @@ namespace Infrastructure.Brokers.RabbitMq
         private readonly IConnection _connection;
         private readonly Dictionary<string, IModel> _channels;
 
+        
         public bool AutoAck { get; set; } = true;
-
-        public ChannelConfig ChannelConfig { get; set; }
-        public QueueConfig QueueConfig { get; set; }
+        
+        public ChannelConfig DefaultChannelConfig { get; set; }
+        public QueueConfig DefaultQueueConfig { get; set; }
 
         public RabbitMqClient(string host = "localhost")
         {
             _channels = new Dictionary<string, IModel>();
-            ChannelConfig = new ChannelConfig
-            {
-                PrefetchSize = 0,
-                PrefetchCount = 1
-            };
-            QueueConfig = new QueueConfig
-            {
-                IsDurable = false
-            };
+            InitDefaultConfig();
             
             var factory = new ConnectionFactory {HostName = host};
             _connection = factory.CreateConnection();
@@ -70,9 +63,10 @@ namespace Infrastructure.Brokers.RabbitMq
             return result.Body;
         }
 
-        public void CreateQueue(string queueName)
+        public void CreateQueue(string queueName, QueueConfig queueConfig = null)
         {
-            GetChannel().QueueDeclare(queueName, QueueConfig.IsDurable, false, false, null);
+            var config = queueConfig ?? DefaultQueueConfig;
+            GetChannel().QueueDeclare(queueName, config.IsDurable, false, false, null);
         }
         
         public void Dispose()
@@ -101,9 +95,30 @@ namespace Infrastructure.Brokers.RabbitMq
             return channel;
         }
 
-        private void ConfigureChannel(IModel channel)
+        private void InitDefaultConfig()
         {
-            channel.BasicQos(0, (ushort) ChannelConfig.PrefetchCount, false);
+            DefaultChannelConfig = new ChannelConfig
+            {
+                PrefetchSize = 0,
+                PrefetchCount = 1
+            };
+            DefaultQueueConfig = new QueueConfig
+            {
+                IsDurable = false
+            };
+        }
+        
+        private void ConfigureChannel(IModel channel, ChannelConfig channelConfig = null)
+        {
+            var config = channelConfig ?? DefaultChannelConfig;
+            channel.BasicQos(0, (ushort) config.PrefetchCount, false);
         }
     }
+
+//    struct ChannelInfo
+//    {
+//        public IModel Channel { get; set; }
+//
+//        public ChannelConfig Config { get; set; }
+//    }
 }

@@ -13,5 +13,10 @@ namespace Infrastructure.Brokers.RabbitMq.Config
         /// (if 1 that if consumer not ack one message that it doesn't get new)
         /// </summary>
         public int PrefetchCount { get; set; }
+
+        /// <summary>
+        /// Mark that ack will send directly after getting a message from the queue (without manual ack)
+        /// </summary>
+        public bool AutoAck { get; set; }
     }
 }
