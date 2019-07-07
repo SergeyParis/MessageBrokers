@@ -12,11 +12,8 @@ namespace Consumer1
         static void Main(string[] args)
         {
             Console.WriteLine("start c1");
-            
-            var rabbit = new RabbitMqClient
-            {
-                AutoAck = false
-            };
+
+            var rabbit = new RabbitMqClient();
             rabbit.CreateQueue(QueueName);
             
             rabbit.SubscribeOnQueue((model, arg) =>

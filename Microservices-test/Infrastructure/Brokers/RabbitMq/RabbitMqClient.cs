@@ -10,19 +10,18 @@ namespace Infrastructure.Brokers.RabbitMq
 {
     public class RabbitMqClient : IDisposable
     {
+        private const string LocalHostName = "localhost";
+        
         private readonly IConnection _connection;
-        private readonly Dictionary<string, IModel> _channels;
+        private readonly Dictionary<string, ChannelInfo> _channels;
 
-        
-        public bool AutoAck { get; set; } = true;
-        
-        public ChannelConfig DefaultChannelConfig { get; set; }
-        public QueueConfig DefaultQueueConfig { get; set; }
+        private ChannelConfig _channelConfig;
+        private QueueConfig _defaultQueueConfig;
 
-        public RabbitMqClient(string host = "localhost")
+        public RabbitMqClient(string host = LocalHostName, ChannelConfig channelConfig = null)
         {
-            _channels = new Dictionary<string, IModel>();
-            InitDefaultConfig();
+            _channels = new Dictionary<string, ChannelInfo>();
+            InitConfig(channelConfig);
             
             var factory = new ConnectionFactory {HostName = host};
             _connection = factory.CreateConnection();
@@ -30,33 +29,34 @@ namespace Infrastructure.Brokers.RabbitMq
 
         public void PublishMessage(byte[] body, string routingKey)
         {
-            GetChannel().BasicPublish("", routingKey, null, body);
+            GetChannelInfo().Channel.BasicPublish("", routingKey, null, body);
         }
 
         public void SubscribeOnQueue(Action<object, BasicDeliverEventArgs> handler, string queueName)
         {
-            var channel = GetChannel();
-
+            var channelInfo = GetChannelInfo();
+            var channel = channelInfo.Channel;
+            
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, args) => handler(model, args);
 
-            channel.BasicConsume(queueName, AutoAck, consumer);
+            channel.BasicConsume(queueName, channelInfo.Config.AutoAck, consumer);
         }
 
         public void Ack(BasicDeliverEventArgs args)
         {
-            var channel = GetChannel();
+            var channel = GetChannelInfo().Channel;
             channel.BasicAck(args.DeliveryTag, false);
         }
 
         public byte[] WaitMessageFromQueue(string queueName)
         {
-            var channel = GetChannel();
+            var channelInfo = GetChannelInfo();
 
             BasicGetResult result = null;
             while (result == null)
             {
-                result = channel.BasicGet(queueName, AutoAck);
+                result = channelInfo.Channel.BasicGet(queueName, channelInfo.Config.AutoAck);
                 Thread.Sleep(50);
             }
 
@@ -65,29 +65,35 @@ namespace Infrastructure.Brokers.RabbitMq
 
         public void CreateQueue(string queueName, QueueConfig queueConfig = null)
         {
-            var config = queueConfig ?? DefaultQueueConfig;
-            GetChannel().QueueDeclare(queueName, config.IsDurable, false, false, null);
+            var channel = GetChannelInfo().Channel;
+            var config = queueConfig ?? _defaultQueueConfig;
+            channel.QueueDeclare(queueName, config.IsDurable, false, false, null);
         }
         
         public void Dispose()
         {
             _connection?.Dispose();
             foreach (var channel in _channels)
-                channel.Value.Dispose();
+                channel.Value.Channel.Dispose();
         }
         
-        private IModel GetChannel()
+        private ChannelInfo GetChannelInfo(ChannelConfig channelConfig = null)
         {
             // channel - program connection to Rabbit MQ (new channel must create for new threads)
             // auto-create new channel for every new thread
             var channelName = Thread.CurrentThread.ManagedThreadId.ToString();
-            IModel channel;
+            ChannelInfo channel;
 
             if (_channels.Any(x => x.Key == channelName))
                 channel = _channels[channelName];
             else
             {
-                channel = _connection.CreateModel();
+                channel = new ChannelInfo
+                {
+                    Channel = _connection.CreateModel(),
+                    Config = _channelConfig
+                };
+                
                 _channels.Add(channelName, channel);
             }
             
@@ -95,30 +101,29 @@ namespace Infrastructure.Brokers.RabbitMq
             return channel;
         }
 
-        private void InitDefaultConfig()
+        private void InitConfig(ChannelConfig channelConfig)
         {
-            DefaultChannelConfig = new ChannelConfig
+            _channelConfig = channelConfig ?? new ChannelConfig
             {
+                AutoAck = false,
                 PrefetchSize = 0,
                 PrefetchCount = 1
             };
-            DefaultQueueConfig = new QueueConfig
+            _defaultQueueConfig = new QueueConfig
             {
                 IsDurable = false
             };
         }
         
-        private void ConfigureChannel(IModel channel, ChannelConfig channelConfig = null)
+        private void ConfigureChannel(ChannelInfo channel)
         {
-            var config = channelConfig ?? DefaultChannelConfig;
-            channel.BasicQos(0, (ushort) config.PrefetchCount, false);
+            channel.Channel.BasicQos(0, (ushort) channel.Config.PrefetchCount, false);
         }
     }
 
-//    struct ChannelInfo
-//    {
-//        public IModel Channel { get; set; }
-//
-//        public ChannelConfig Config { get; set; }
-//    }
+    struct ChannelInfo
+    {
+        public IModel Channel { get; set; }
+        public ChannelConfig Config { get; set; }
+    }
 }
