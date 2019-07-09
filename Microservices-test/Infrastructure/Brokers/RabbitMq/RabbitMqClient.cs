@@ -72,7 +72,12 @@ namespace Infrastructure.Brokers.RabbitMq
 
         public void ClearQueue(string queueName)
         {
-            var channel = GetChannelInfo().Channel.QueuePurge(queueName);
+            GetChannelInfo().Channel.QueuePurge(queueName);
+        }
+
+        public void DeleteQueue(string queueName)
+        {
+            GetChannelInfo().Channel.QueueDelete(queueName);
         }
         
         public void Dispose()
