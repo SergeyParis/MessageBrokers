@@ -69,6 +69,11 @@ namespace Infrastructure.Brokers.RabbitMq
             var config = queueConfig ?? _defaultQueueConfig;
             channel.QueueDeclare(queueName, config.IsDurable, false, false, null);
         }
+
+        public void ClearQueue(string queueName)
+        {
+            var channel = GetChannelInfo().Channel.QueuePurge(queueName);
+        }
         
         public void Dispose()
         {
