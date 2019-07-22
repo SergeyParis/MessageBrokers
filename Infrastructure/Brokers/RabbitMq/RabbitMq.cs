@@ -1,10 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using Infrastructure.Brokers.RabbitMq.Contracts;
-using Infrastructure.Brokers.RabbitMq.Contracts.Impl;
+using Infrastructure.Brokers.RabbitMq.Factories;
 using Infrastructure.Brokers.RabbitMq.Models;
-using RabbitMQ.Client;
 
 namespace Infrastructure.Brokers.RabbitMq
 {
@@ -15,7 +11,10 @@ namespace Infrastructure.Brokers.RabbitMq
 
         public static IChannel GetOrCreateChannel(string host = LocalHostName, ChannelConfig? config = null)
         {
-            return null;
+            if (config == null)
+                config = ConfigFactory.GetChannelConfig();
+            
+            return ChannelFactory.GetOrCreateChannel(host, config.Value);
         }
     }
 }

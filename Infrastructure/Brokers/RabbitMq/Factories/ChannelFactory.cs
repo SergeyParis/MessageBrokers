@@ -8,12 +8,12 @@ using RabbitMQ.Client;
 
 namespace Infrastructure.Brokers.RabbitMq.Factories
 {
-    static class ConnectionFactory
+    static class ChannelFactory
     {
         private static readonly Dictionary<string, IConnection> Connections;
         private static readonly Dictionary<string, IChannel> Channels;
 
-        static ConnectionFactory()
+        static ChannelFactory()
         {
             Channels = new Dictionary<string, IChannel>();
             Connections = new Dictionary<string, IConnection>();
