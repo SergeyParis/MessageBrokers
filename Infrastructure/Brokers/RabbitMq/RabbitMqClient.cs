@@ -8,6 +8,7 @@ using RabbitMQ.Client.Events;
 
 namespace Infrastructure.Brokers.RabbitMq
 {
+    [Obsolete]
     public class RabbitMqClient : IDisposable
     {
         private const string LocalHostName = "localhost";
