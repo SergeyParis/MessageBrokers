@@ -16,7 +16,7 @@ namespace Infrastructure.Brokers.RabbitMq
         private readonly IConnection _connection;
         private readonly Dictionary<string, ChannelInfo> _channels;
 
-        private ChannelConfig _channelConfig;
+        private ChannelConfig _channelConfig; 
         private QueueConfig _defaultQueueConfig;
 
         public RabbitMqClient(string host = LocalHostName, ChannelConfig? channelConfig = null)
