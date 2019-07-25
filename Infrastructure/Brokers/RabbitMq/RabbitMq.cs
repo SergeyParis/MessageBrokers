@@ -9,8 +9,10 @@ namespace Infrastructure.Brokers.RabbitMq
     {
         private const string LocalHostName = "localhost";
 
+        private readonly ConfigFactory _configFactory;
         private readonly ChannelFactory _channelFactory;
-
+        private readonly QueueFactory _queueFactory;
+        
         private string _hostName;
         private ChannelConfig _channelConfig;
 
@@ -19,10 +21,9 @@ namespace Infrastructure.Brokers.RabbitMq
             set => _hostName = value ?? LocalHostName;
             get => _hostName;
         }
-
         public ChannelConfig? ChannelConfig
         {
-            set => _channelConfig = value ?? ConfigFactory.GetChannelConfig();
+            set => _channelConfig = value ?? _configFactory.GetChannelConfig();
             get => _channelConfig;
         }
 
@@ -31,11 +32,13 @@ namespace Infrastructure.Brokers.RabbitMq
             Host = host;
             ChannelConfig = config;
 
+            _configFactory = new ConfigFactory();
             _channelFactory = new ChannelFactory();
+            _queueFactory = new QueueFactory(GetChannel(), _configFactory.GetQueueConfig());
         }
 
-        private IChannel GetOrCreateChannel() => _channelFactory.GetOrCreateChannel(Host, ChannelConfig.Value);
-
+        private IChannel GetChannel() => _channelFactory.GetOrCreateChannel(Host, ChannelConfig.Value);
+        
         public void Dispose()
         {
             _channelFactory.Dispose();
