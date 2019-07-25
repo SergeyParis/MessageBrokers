@@ -25,5 +25,15 @@ namespace Infrastructure.Brokers.RabbitMq.Factories
                 PrefetchCount = prefetchCount,
                 PrefetchSize = prefetchSize
             };
+
+        public static QueueConfig GetQueueConfig() => new QueueConfig
+        {
+            IsDurable = false
+        };
+
+        public static QueueConfig GetQueueConfig(bool isDurable) => new QueueConfig
+        {
+            IsDurable = isDurable
+        };
     }
 }
