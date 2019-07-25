@@ -16,7 +16,7 @@ namespace Infrastructure.Brokers.RabbitMq
 
         public string Host
         {
-            set { }
+            set => _hostName = value ?? LocalHostName;
             get => _hostName;
         }
 
