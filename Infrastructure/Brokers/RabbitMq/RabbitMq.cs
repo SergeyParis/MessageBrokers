@@ -1,8 +1,8 @@
 using System;
+using Infrastructure.Brokers.RabbitMq.Contracts;
 using Infrastructure.Brokers.RabbitMq.Facades;
 using Infrastructure.Brokers.RabbitMq.Facades.Impl;
 using Infrastructure.Brokers.RabbitMq.Factories;
-using Infrastructure.Brokers.RabbitMq.Interfaces;
 using Infrastructure.Brokers.RabbitMq.Models;
 
 namespace Infrastructure.Brokers.RabbitMq

@@ -1,6 +1,6 @@
 using System;
-using Infrastructure.Brokers.RabbitMq.Interfaces;
-using Infrastructure.Brokers.RabbitMq.Interfaces.Impl;
+using Infrastructure.Brokers.RabbitMq.Contracts;
+using Infrastructure.Brokers.RabbitMq.Contracts.Impl;
 using Infrastructure.Brokers.RabbitMq.Models;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
