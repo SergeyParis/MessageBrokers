@@ -1,12 +1,11 @@
 using System;
-using Infrastructure.Brokers.RabbitMq.Facades;
 using Infrastructure.Brokers.RabbitMq.Interfaces;
 using Infrastructure.Brokers.RabbitMq.Interfaces.Impl;
 using Infrastructure.Brokers.RabbitMq.Models;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Infrastructure.Brokers.RabbitMq.Factories
+namespace Infrastructure.Brokers.RabbitMq.Facades.Impl
 {
     public class QueuesFacade : IQueuesFacade
     {

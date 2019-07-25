@@ -1,5 +1,6 @@
 using System;
 using Infrastructure.Brokers.RabbitMq.Facades;
+using Infrastructure.Brokers.RabbitMq.Facades.Impl;
 using Infrastructure.Brokers.RabbitMq.Factories;
 using Infrastructure.Brokers.RabbitMq.Interfaces;
 using Infrastructure.Brokers.RabbitMq.Models;
@@ -36,6 +37,7 @@ namespace Infrastructure.Brokers.RabbitMq
 
             _configFactory = new ConfigFactory();
             _channelFactory = new ChannelFactory();
+            
             _queuesFacade = new QueuesFacade(GetChannel(), _configFactory.GetQueueConfig());
         }
 
