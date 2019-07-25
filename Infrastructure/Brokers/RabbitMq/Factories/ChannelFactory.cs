@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Infrastructure.Brokers.RabbitMq.Contracts;
-using Infrastructure.Brokers.RabbitMq.Contracts.Impl;
+using Infrastructure.Brokers.RabbitMq.Interfaces;
+using Infrastructure.Brokers.RabbitMq.Interfaces.Impl;
 using Infrastructure.Brokers.RabbitMq.Models;
 using RabbitMQ.Client;
 

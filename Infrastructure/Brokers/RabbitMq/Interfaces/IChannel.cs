@@ -1,7 +1,7 @@
 using Infrastructure.Brokers.RabbitMq.Models;
 using RabbitMQ.Client;
 
-namespace Infrastructure.Brokers.RabbitMq.Contracts
+namespace Infrastructure.Brokers.RabbitMq.Interfaces
 {
     public interface IChannel
     {

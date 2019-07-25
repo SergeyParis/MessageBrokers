@@ -1,13 +1,14 @@
 using System;
-using Infrastructure.Brokers.RabbitMq.Contracts;
-using Infrastructure.Brokers.RabbitMq.Contracts.Impl;
+using Infrastructure.Brokers.RabbitMq.Facades;
+using Infrastructure.Brokers.RabbitMq.Interfaces;
+using Infrastructure.Brokers.RabbitMq.Interfaces.Impl;
 using Infrastructure.Brokers.RabbitMq.Models;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 namespace Infrastructure.Brokers.RabbitMq.Factories
 {
-    public class QueueFactory
+    public class QueuesFacade : IQueuesFacade
     {
         private QueueConfig _queueConfig;
         private ChannelConfig _channelConfig;
@@ -30,7 +31,7 @@ namespace Infrastructure.Brokers.RabbitMq.Factories
             };
         }
 
-        public QueueFactory(IChannel channel, QueueConfig queueConfig)
+        public QueuesFacade(IChannel channel, QueueConfig queueConfig)
         {
             if (channel == null)
                 throw new NullReferenceException();
