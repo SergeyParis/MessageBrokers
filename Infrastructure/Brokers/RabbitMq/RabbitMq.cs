@@ -9,24 +9,36 @@ namespace Infrastructure.Brokers.RabbitMq
     {
         private const string LocalHostName = "localhost";
 
-        private static readonly ChannelFactory FactoryChannel;
-        
-        static RabbitMq()
+        private readonly ChannelFactory _channelFactory;
+
+        private string _hostName;
+        private ChannelConfig _channelConfig;
+
+        public string Host
         {
-            FactoryChannel = new ChannelFactory();
+            set { }
+            get => _hostName;
         }
-        
-        public static IChannel GetOrCreateChannel(string host = LocalHostName, ChannelConfig? config = null)
+
+        public ChannelConfig? ChannelConfig
         {
-            if (config == null)
-                config = ConfigFactory.GetChannelConfig();
-            
-            return FactoryChannel.GetOrCreateChannel(host, config.Value);
+            set => _channelConfig = value ?? ConfigFactory.GetChannelConfig();
+            get => _channelConfig;
         }
+
+        public RabbitMq(string host = LocalHostName, ChannelConfig? config = null)
+        {
+            Host = host;
+            ChannelConfig = config;
+
+            _channelFactory = new ChannelFactory();
+        }
+
+        private IChannel GetOrCreateChannel() => _channelFactory.GetOrCreateChannel(Host, ChannelConfig.Value);
 
         public void Dispose()
         {
-            FactoryChannel.Dispose();
+            _channelFactory.Dispose();
         }
     }
 }
