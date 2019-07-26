@@ -32,14 +32,11 @@ namespace Infrastructure.Brokers.RabbitMq
         public RabbitMq(string host = null, ChannelConfig? config = null)
         {
             _channelProvider = new ChannelProvider(host, config);
-            
-            _queuesFacade = new QueuesFacade(GetOrCreateChannel(), ConfigFactory.GetQueueConfig());
+            _queuesFacade = new QueuesFacade(_channelProvider.GetChannel(), ConfigFactory.GetQueueConfig());
         }
 
         public IQueuesFacade Queues() => _queuesFacade;
         
-        private IChannel GetOrCreateChannel() => ChannelFactory.GetChannel(Host, ChannelConfig.Value);
-
         public void Dispose()
         {
             ChannelFactory.Dispose();
