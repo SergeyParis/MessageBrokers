@@ -13,7 +13,7 @@ namespace Infrastructure.Brokers.RabbitMq
         // providers
         private readonly IChannelProvider _channelProvider;
         // facades
-        private readonly IQueuesFacade _queuesFacade;
+        public IQueuesFacade Queues { get; }
         
         public string Host
         {
@@ -32,11 +32,10 @@ namespace Infrastructure.Brokers.RabbitMq
         public RabbitMq(string host = null, ChannelConfig? config = null)
         {
             _channelProvider = new ChannelProvider(host, config);
-            _queuesFacade = new QueuesFacade(_channelProvider, ConfigFactory.GetQueueConfig());
+            
+            Queues = new QueuesFacade(_channelProvider, ConfigFactory.GetQueueConfig());
         }
 
-        public IQueuesFacade Queues() => _queuesFacade;
-        
         public void Dispose()
         {
             ChannelFactory.Dispose();

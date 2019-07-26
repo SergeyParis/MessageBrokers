@@ -12,7 +12,7 @@ namespace Infrastructure.Brokers.RabbitMq.Facades
         public QueueConfig QueueConfig { get; set; }
 
         public QueuesFacade(IChannelProvider channelProvider, QueueConfig queueConfig)
-            :base(channelProvider)
+            : base(channelProvider)
         {
             QueueConfig = queueConfig;
         }
