@@ -4,50 +4,45 @@ using Infrastructure.Brokers.RabbitMq.Facades;
 using Infrastructure.Brokers.RabbitMq.Facades.Impl;
 using Infrastructure.Brokers.RabbitMq.Factories;
 using Infrastructure.Brokers.RabbitMq.Models;
+using ChannelFactory = Infrastructure.Brokers.RabbitMq.Factories.ChannelFactory;
 
 namespace Infrastructure.Brokers.RabbitMq
 {
     public class RabbitMq : IDisposable
     {
-        private const string LocalHostName = "localhost";
-
-        private readonly ConfigFactory _configFactory;
-        private readonly ChannelFactory _channelFactory;
-        
-        private string _hostName;
-        private ChannelConfig _channelConfig;
-
-        private IQueuesFacade _queuesFacade;
+        // providers
+        private readonly IChannelProvider _channelProvider;
+        // facades
+        private readonly IQueuesFacade _queuesFacade;
         
         public string Host
         {
-            set => _hostName = value ?? LocalHostName;
-            get => _hostName;
+            set => _channelProvider.Host = value;
+            get => _channelProvider.Host;
         }
         public ChannelConfig? ChannelConfig
         {
-            set => _channelConfig = value ?? _configFactory.GetChannelConfig();
-            get => _channelConfig;
+            set => _channelProvider.ChannelConfig = value;
+            get => _channelProvider.ChannelConfig;
         }
-
-        public RabbitMq(string host = LocalHostName, ChannelConfig? config = null)
+        
+        /// <summary>
+        /// Default host is localhost
+        /// </summary>
+        public RabbitMq(string host = null, ChannelConfig? config = null)
         {
-            Host = host;
-            ChannelConfig = config;
-
-            _configFactory = new ConfigFactory();
-            _channelFactory = new ChannelFactory();
+            _channelProvider = new ChannelProvider(host, config);
             
-            _queuesFacade = new QueuesFacade(GetChannel(), _configFactory.GetQueueConfig());
+            _queuesFacade = new QueuesFacade(GetOrCreateChannel(), ConfigFactory.GetQueueConfig());
         }
 
         public IQueuesFacade Queues() => _queuesFacade;
         
-        private IChannel GetChannel() => _channelFactory.GetOrCreateChannel(Host, ChannelConfig.Value);
+        private IChannel GetOrCreateChannel() => ChannelFactory.GetChannel(Host, ChannelConfig.Value);
 
         public void Dispose()
         {
-            _channelFactory.Dispose();
+            ChannelFactory.Dispose();
         }
     }
 }
