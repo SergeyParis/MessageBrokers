@@ -1,7 +1,7 @@
 using System;
 using RabbitMQ.Client.Events;
 
-namespace Infrastructure.Brokers.RabbitMq.Facades
+namespace Infrastructure.Brokers.RabbitMq.Facades.Interfaces
 {
     public interface IQueuesFacade
     {

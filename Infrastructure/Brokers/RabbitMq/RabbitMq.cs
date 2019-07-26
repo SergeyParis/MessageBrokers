@@ -1,7 +1,7 @@
 using System;
 using Infrastructure.Brokers.RabbitMq.Contracts;
 using Infrastructure.Brokers.RabbitMq.Facades;
-using Infrastructure.Brokers.RabbitMq.Facades.Impl;
+using Infrastructure.Brokers.RabbitMq.Facades.Interfaces;
 using Infrastructure.Brokers.RabbitMq.Factories;
 using Infrastructure.Brokers.RabbitMq.Models;
 using ChannelFactory = Infrastructure.Brokers.RabbitMq.Factories.ChannelFactory;
@@ -32,7 +32,7 @@ namespace Infrastructure.Brokers.RabbitMq
         public RabbitMq(string host = null, ChannelConfig? config = null)
         {
             _channelProvider = new ChannelProvider(host, config);
-            _queuesFacade = new QueuesFacade(_channelProvider.GetChannel(), ConfigFactory.GetQueueConfig());
+            _queuesFacade = new QueuesFacade(_channelProvider, ConfigFactory.GetQueueConfig());
         }
 
         public IQueuesFacade Queues() => _queuesFacade;
