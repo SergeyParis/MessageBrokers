@@ -7,7 +7,7 @@ using RabbitMQ.Client.Events;
 
 namespace Infrastructure.Brokers.RabbitMq.Facades
 {
-    public class QueuesFacade : BaseFacade, IQueuesFacade
+    internal class QueuesFacade : BaseFacade, IQueuesFacade
     {
         public QueueConfig QueueConfig { get; set; }
 

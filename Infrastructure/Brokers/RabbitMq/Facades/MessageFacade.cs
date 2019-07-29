@@ -6,7 +6,7 @@ using RabbitMQ.Client.Events;
 
 namespace Infrastructure.Brokers.RabbitMq.Facades
 {
-    public class MessageFacade : BaseFacade, IMessageFacade
+    internal class MessageFacade : BaseFacade, IMessageFacade
     {
         public MessageFacade(IChannelProvider channelProvider) : base(channelProvider)
         {

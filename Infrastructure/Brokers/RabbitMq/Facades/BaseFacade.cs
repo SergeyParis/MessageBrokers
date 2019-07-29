@@ -5,7 +5,7 @@ using RabbitMQ.Client;
 
 namespace Infrastructure.Brokers.RabbitMq.Facades
 {
-    public abstract class BaseFacade
+    internal abstract class BaseFacade
     {
         protected readonly IChannelProvider ChannelProvider;
 

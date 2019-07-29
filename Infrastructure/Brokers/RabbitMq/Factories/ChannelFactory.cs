@@ -8,15 +8,15 @@ using RabbitMQ.Client;
 
 namespace Infrastructure.Brokers.RabbitMq.Factories
 {
-    static class ChannelFactory
+    internal static class ChannelFactory
     {
-        private static readonly Dictionary<string, IConnection> _connections;
-        private static readonly Dictionary<string, IChannel> _channels;
+        private static readonly Dictionary<string, IConnection> Connections;
+        private static readonly Dictionary<string, IChannel> Channels;
 
         static ChannelFactory()
         {
-            _channels = new Dictionary<string, IChannel>();
-            _connections = new Dictionary<string, IConnection>();
+            Channels = new Dictionary<string, IChannel>();
+            Connections = new Dictionary<string, IConnection>();
         }
 
         /// <summary>
@@ -32,11 +32,11 @@ namespace Infrastructure.Brokers.RabbitMq.Factories
 
         private static IConnection GetConnectionOrCreate(string host)
         {
-            if (_connections.Any(x => x.Key == host))
-                return _connections[host];
+            if (Connections.Any(x => x.Key == host))
+                return Connections[host];
 
             var connection = new ConnectionFactory {HostName = host}.CreateConnection();
-            _connections.Add(host, connection);
+            Connections.Add(host, connection);
 
             return connection;
         }
@@ -48,8 +48,8 @@ namespace Infrastructure.Brokers.RabbitMq.Factories
             var channelName = Thread.CurrentThread.ManagedThreadId.ToString();
             IChannel contractChannel;
 
-            if (_channels.Any(x => x.Key == channelName))
-                contractChannel = _channels[channelName];
+            if (Channels.Any(x => x.Key == channelName))
+                contractChannel = Channels[channelName];
             else
             {
                 contractChannel = new Channel
@@ -58,7 +58,7 @@ namespace Infrastructure.Brokers.RabbitMq.Factories
                     Config = config
                 };
 
-                _channels.Add(channelName, contractChannel);
+                Channels.Add(channelName, contractChannel);
             }
 
             ConfigureChannel(contractChannel);
@@ -72,7 +72,7 @@ namespace Infrastructure.Brokers.RabbitMq.Factories
 
         public static void Dispose()
         {
-            foreach (var connection in _connections)
+            foreach (var connection in Connections)
                 connection.Value.Dispose();
         }
     }

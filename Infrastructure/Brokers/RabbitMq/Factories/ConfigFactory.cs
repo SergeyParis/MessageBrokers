@@ -2,7 +2,7 @@ using Infrastructure.Brokers.RabbitMq.Models;
 
 namespace Infrastructure.Brokers.RabbitMq.Factories
 {
-    public static class ConfigFactory
+    internal static class ConfigFactory
     {
         public static ChannelConfig GetChannelConfig() => new ChannelConfig
         {
