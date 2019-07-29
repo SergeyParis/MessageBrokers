@@ -1,3 +1,4 @@
+using System.Threading;
 using Infrastructure.Brokers.RabbitMq.Contracts;
 using Infrastructure.Brokers.RabbitMq.Facades.Interfaces;
 using RabbitMQ.Client;
@@ -19,6 +20,18 @@ namespace Infrastructure.Brokers.RabbitMq.Facades
         public void Ack(BasicDeliverEventArgs args)
         {
             MqChannel.BasicAck(args.DeliveryTag, false);
+        }
+        
+        public byte[] WaitMessageFromQueue(string queueName)
+        {
+            BasicGetResult result = null;
+            while (result == null)
+            {
+                result = MqChannel.BasicGet(queueName, MqChannelConfig.AutoAck);
+                Thread.Sleep(50);
+            }
+
+            return result.Body;
         }
     }
 }

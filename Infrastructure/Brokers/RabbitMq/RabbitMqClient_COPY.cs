@@ -11,31 +11,7 @@ namespace Infrastructure.Brokers.RabbitMq
     [Obsolete]
     public class RabbitMqClient_COPY
     {
-        public void PublishMessage(byte[] body, string routingKey)
-        {
-            GetChannelInfo().Channel.BasicPublish("", routingKey, null, body);
-        }
-
-        public void Ack(BasicDeliverEventArgs args)
-        {
-            var channel = GetChannelInfo().Channel;
-            channel.BasicAck(args.DeliveryTag, false);
-        }
-
-        public byte[] WaitMessageFromQueue(string queueName)
-        {
-            var channelInfo = GetChannelInfo();
-
-            BasicGetResult result = null;
-            while (result == null)
-            {
-                result = channelInfo.Channel.BasicGet(queueName, channelInfo.Config.AutoAck);
-                Thread.Sleep(50);
-            }
-
-            return result.Body;
-        }
-      
+        
     }
 
 }

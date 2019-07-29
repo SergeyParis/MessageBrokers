@@ -14,7 +14,8 @@ namespace Infrastructure.Brokers.RabbitMq
         private readonly IChannelProvider _channelProvider;
         // facades
         public IQueuesFacade Queues { get; }
-        
+        public IMessageFacade Messages { get; }
+
         public string Host
         {
             set => _channelProvider.Host = value;
@@ -34,6 +35,7 @@ namespace Infrastructure.Brokers.RabbitMq
             _channelProvider = new ChannelProvider(host, config);
             
             Queues = new QueuesFacade(_channelProvider, ConfigFactory.GetQueueConfig());
+            Messages = new MessageFacade(_channelProvider);
         }
 
         public void Dispose()
