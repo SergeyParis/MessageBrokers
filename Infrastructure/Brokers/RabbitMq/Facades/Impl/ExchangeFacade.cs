@@ -1,5 +1,7 @@
+using System;
 using Infrastructure.Brokers.RabbitMq.Contracts;
-using Infrastructure.Brokers.RabbitMq.Contracts.Enums;
+using RabbitMQ.Client;
+using ExchangeTypeEnum = Infrastructure.Brokers.RabbitMq.Contracts.Enums.ExchangeType;
 
 namespace Infrastructure.Brokers.RabbitMq.Facades.Impl
 {
@@ -9,9 +11,26 @@ namespace Infrastructure.Brokers.RabbitMq.Facades.Impl
         {
         }
 
-        public void CreateExchange(string name, ExchangeType type)
+        public void CreateExchange(string name, ExchangeTypeEnum type)
         {
-            throw new System.NotImplementedException();
+            MqChannel.ExchangeDeclare(name, ConvertToMqExchangeType(type));
+        }
+        
+        public void CreateExchange(string name, ExchangeTypeEnum type, bool durable, bool autoDelete)
+        {
+            MqChannel.ExchangeDeclare(name, ConvertToMqExchangeType(type), durable, autoDelete, null);
+        }
+        
+        private string ConvertToMqExchangeType(ExchangeTypeEnum type)
+        {
+            switch (type)
+            {
+                case ExchangeTypeEnum.Direct: return RabbitMQ.Client.ExchangeType.Direct;
+                case ExchangeTypeEnum.Topic: return RabbitMQ.Client.ExchangeType.Topic;
+                case ExchangeTypeEnum.Headers: return RabbitMQ.Client.ExchangeType.Headers;
+                case ExchangeTypeEnum.Fanout: return RabbitMQ.Client.ExchangeType.Fanout;
+                default: throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
         }
     }
 }
