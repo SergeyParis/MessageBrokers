@@ -8,5 +8,10 @@ namespace Infrastructure.Brokers.RabbitMq.Facades
         public ExchangeFacade(IChannelProvider channelProvider) : base(channelProvider)
         {
         }
+
+        public void CreateExchange()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
