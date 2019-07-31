@@ -1,6 +1,6 @@
 using RabbitMQ.Client.Events;
 
-namespace Infrastructure.Brokers.RabbitMq.Facades.Interfaces
+namespace Infrastructure.Brokers.RabbitMq.Facades
 {
     public interface IMessageFacade
     {

@@ -3,7 +3,7 @@ using Infrastructure.Brokers.RabbitMq.Configs;
 using Infrastructure.Brokers.RabbitMq.Contracts;
 using Infrastructure.Brokers.RabbitMq.Contracts.Impl;
 using Infrastructure.Brokers.RabbitMq.Facades;
-using Infrastructure.Brokers.RabbitMq.Facades.Interfaces;
+using Infrastructure.Brokers.RabbitMq.Facades.Impl;
 using Infrastructure.Brokers.RabbitMq.Factories;
 using ChannelFactory = Infrastructure.Brokers.RabbitMq.Factories.ChannelFactory;
 

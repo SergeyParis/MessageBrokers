@@ -1,7 +1,6 @@
 using Infrastructure.Brokers.RabbitMq.Contracts;
-using Infrastructure.Brokers.RabbitMq.Facades.Interfaces;
 
-namespace Infrastructure.Brokers.RabbitMq.Facades
+namespace Infrastructure.Brokers.RabbitMq.Facades.Impl
 {
     class ExchangeFacade : BaseFacade, IExchangeFacade
     {
