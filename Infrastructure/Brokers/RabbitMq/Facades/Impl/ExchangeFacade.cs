@@ -1,4 +1,5 @@
 using Infrastructure.Brokers.RabbitMq.Contracts;
+using Infrastructure.Brokers.RabbitMq.Contracts.Enums;
 
 namespace Infrastructure.Brokers.RabbitMq.Facades.Impl
 {
@@ -8,7 +9,7 @@ namespace Infrastructure.Brokers.RabbitMq.Facades.Impl
         {
         }
 
-        public void CreateExchange()
+        public void CreateExchange(string name, ExchangeType type)
         {
             throw new System.NotImplementedException();
         }
