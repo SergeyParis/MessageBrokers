@@ -1,7 +1,7 @@
-using Infrastructure.Brokers.RabbitMq.Contracts;
+using Infrastructure.Brokers.RabbitMq.Configs;
 using RabbitMQ.Client;
 
-namespace Infrastructure.Brokers.RabbitMq.Models
+namespace Infrastructure.Brokers.RabbitMq.Contracts.Impl
 {
     class Channel : IChannel
     {

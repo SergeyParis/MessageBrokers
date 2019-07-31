@@ -1,7 +1,7 @@
-using Infrastructure.Brokers.RabbitMq.Contracts;
+using Infrastructure.Brokers.RabbitMq.Configs;
 using Infrastructure.Brokers.RabbitMq.Factories;
 
-namespace Infrastructure.Brokers.RabbitMq.Models
+namespace Infrastructure.Brokers.RabbitMq.Contracts.Impl
 {
     class ChannelProvider : IChannelProvider
     {

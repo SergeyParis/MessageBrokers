@@ -1,6 +1,6 @@
 using System;
+using Infrastructure.Brokers.RabbitMq.Configs;
 using Infrastructure.Brokers.RabbitMq.Contracts;
-using Infrastructure.Brokers.RabbitMq.Models;
 using RabbitMQ.Client;
 
 namespace Infrastructure.Brokers.RabbitMq.Facades

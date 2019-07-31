@@ -1,4 +1,4 @@
-namespace Infrastructure.Brokers.RabbitMq.Models
+namespace Infrastructure.Brokers.RabbitMq.Configs
 {
     public struct ChannelConfig
     {

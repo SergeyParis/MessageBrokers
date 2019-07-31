@@ -1,4 +1,4 @@
-using Infrastructure.Brokers.RabbitMq.Models;
+using Infrastructure.Brokers.RabbitMq.Configs;
 using RabbitMQ.Client;
 
 namespace Infrastructure.Brokers.RabbitMq.Contracts
