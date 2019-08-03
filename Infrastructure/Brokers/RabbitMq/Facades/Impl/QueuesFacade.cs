@@ -39,5 +39,10 @@ namespace Infrastructure.Brokers.RabbitMq.Facades.Impl
 
             MqChannel.BasicConsume(queueName, MqChannelConfig.AutoAck, consumer);
         }
+        
+        public void BindQueue(string queueName, string exchangeName, string routingKey)
+        {
+            MqChannel.QueueBind(queueName, exchangeName, routingKey, null);
+        }
     }
 }
