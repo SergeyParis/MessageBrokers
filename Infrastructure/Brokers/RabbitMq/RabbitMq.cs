@@ -40,7 +40,7 @@ namespace Infrastructure.Brokers.RabbitMq
 
             Queues = new QueuesFacade(_channelProvider, ConfigFactory.GetQueueConfig());
             Messages = new MessageFacade(_channelProvider);
-            Exchange = new ExchangeFacade(_channelProvider);
+            Exchange = new ExchangeFacade(_channelProvider, ConfigFactory.GetExchangeConfig());
         }
 
         public void Dispose()

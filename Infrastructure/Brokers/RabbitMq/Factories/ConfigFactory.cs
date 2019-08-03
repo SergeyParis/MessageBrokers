@@ -4,19 +4,7 @@ namespace Infrastructure.Brokers.RabbitMq.Factories
 {
     public static class ConfigFactory
     {
-        public static ChannelConfig GetChannelConfig() => new ChannelConfig
-        {
-            AutoAck = false,
-            PrefetchSize = 0,
-            PrefetchCount = 1
-        };
-
-        public static ChannelConfig GetChannelConfig(bool autoAck, int prefetchCount) => new ChannelConfig
-        {
-            AutoAck = autoAck,
-            PrefetchCount = prefetchCount,
-            PrefetchSize = 0
-        };
+        #region Channels
 
         public static ChannelConfig GetChannelConfig(bool autoAck, int prefetchCount, int prefetchSize) =>
             new ChannelConfig
@@ -26,14 +14,34 @@ namespace Infrastructure.Brokers.RabbitMq.Factories
                 PrefetchSize = prefetchSize
             };
 
-        public static QueueConfig GetQueueConfig() => new QueueConfig
-        {
-            IsDurable = false
-        };
+        public static ChannelConfig GetChannelConfig(bool autoAck, int prefetchCount) =>
+            GetChannelConfig(autoAck, prefetchCount, 0);
+
+        public static ChannelConfig GetChannelConfig() => GetChannelConfig(false, 1);
+
+        #endregion
+
+        #region Queues
 
         public static QueueConfig GetQueueConfig(bool isDurable) => new QueueConfig
         {
             IsDurable = isDurable
         };
+
+        public static QueueConfig GetQueueConfig() => GetQueueConfig(false);
+
+        #endregion
+
+        #region Exchanges
+
+        public static ExchangeConfig GetExchangeConfig(bool durable, bool autoDelete) => new ExchangeConfig
+        {
+            Durable = durable,
+            AutoDelete = autoDelete
+        };
+
+        public static ExchangeConfig GetExchangeConfig() => GetExchangeConfig(false, false);
+
+        #endregion
     }
 }
