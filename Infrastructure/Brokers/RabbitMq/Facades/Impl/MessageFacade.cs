@@ -12,16 +12,18 @@ namespace Infrastructure.Brokers.RabbitMq.Facades.Impl
         {
         }
 
-        public void PublishMessage(byte[] body, string routingKey)
+        public void PublishMessage(byte[] body, string routingKey, string exchangeName)
         {
-            MqChannel.BasicPublish("", routingKey, null, body);
+            MqChannel.BasicPublish(exchangeName, routingKey, null, body);
         }
+        
+        public void PublishMessage(byte[] body, string routingKey) => PublishMessage(body, routingKey, string.Empty);
 
         public void Ack(BasicDeliverEventArgs args)
         {
             MqChannel.BasicAck(args.DeliveryTag, false);
         }
-        
+
         public byte[] WaitMessageFromQueue(string queueName)
         {
             BasicGetResult result = null;
