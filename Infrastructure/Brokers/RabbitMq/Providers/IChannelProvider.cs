@@ -1,6 +1,7 @@
-using Infrastructure.Brokers.RabbitMq.Configs;
+using Infrastructure.Brokers.RabbitMq.Contracts;
+using Infrastructure.Brokers.RabbitMq.Contracts.Configs;
 
-namespace Infrastructure.Brokers.RabbitMq.Contracts
+namespace Infrastructure.Brokers.RabbitMq.Providers
 {
     internal interface IChannelProvider
     {

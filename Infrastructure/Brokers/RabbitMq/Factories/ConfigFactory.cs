@@ -1,4 +1,4 @@
-using Infrastructure.Brokers.RabbitMq.Configs;
+using Infrastructure.Brokers.RabbitMq.Contracts.Configs;
 
 namespace Infrastructure.Brokers.RabbitMq.Factories
 {

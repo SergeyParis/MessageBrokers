@@ -1,11 +1,12 @@
 using System;
 using Infrastructure.Brokers.RabbitMq.Contracts;
+using Infrastructure.Brokers.RabbitMq.Providers;
 using RabbitMQ.Client;
 using ExchangeTypeEnum = Infrastructure.Brokers.RabbitMq.Contracts.Enums.ExchangeType;
 
 namespace Infrastructure.Brokers.RabbitMq.Facades.Impl
 {
-    class ExchangeFacade : BaseFacade, IExchangeFacade
+    internal class ExchangeFacade : BaseFacade, IExchangeFacade
     {
         public ExchangeFacade(IChannelProvider channelProvider) : base(channelProvider)
         {

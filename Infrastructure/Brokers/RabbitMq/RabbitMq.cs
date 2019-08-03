@@ -1,10 +1,12 @@
 using System;
-using Infrastructure.Brokers.RabbitMq.Configs;
 using Infrastructure.Brokers.RabbitMq.Contracts;
+using Infrastructure.Brokers.RabbitMq.Contracts.Configs;
 using Infrastructure.Brokers.RabbitMq.Contracts.Impl;
 using Infrastructure.Brokers.RabbitMq.Facades;
 using Infrastructure.Brokers.RabbitMq.Facades.Impl;
 using Infrastructure.Brokers.RabbitMq.Factories;
+using Infrastructure.Brokers.RabbitMq.Providers;
+using Infrastructure.Brokers.RabbitMq.Providers.Impl;
 using ChannelFactory = Infrastructure.Brokers.RabbitMq.Factories.ChannelFactory;
 
 namespace Infrastructure.Brokers.RabbitMq

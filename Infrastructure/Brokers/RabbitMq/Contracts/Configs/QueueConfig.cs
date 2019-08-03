@@ -1,4 +1,4 @@
-namespace Infrastructure.Brokers.RabbitMq.Configs
+namespace Infrastructure.Brokers.RabbitMq.Contracts.Configs
 {
     public struct QueueConfig
     {
