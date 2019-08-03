@@ -13,6 +13,7 @@ namespace Infrastructure.Brokers.RabbitMq
 {
     public class RabbitMq : IDisposable
     {
+        private MqConfig _mqConfig;
         // providers
         private readonly IChannelProvider _channelProvider;
         // facades
@@ -25,24 +26,42 @@ namespace Infrastructure.Brokers.RabbitMq
             set => _channelProvider.Host = value;
             get => _channelProvider.Host;
         }
-        public ChannelConfig? ChannelConfig
+        public ChannelConfig ChannelConfig
         {
-            set => _channelProvider.ChannelConfig = value;
-            get => _channelProvider.ChannelConfig;
+            set => UpdateConfigs(value);
+            get => _mqConfig.ChannelConfig;
         }
         
         /// <summary>
         /// Default host is localhost
         /// </summary>
-        public RabbitMq(string host = null, ChannelConfig? config = null)
+        public RabbitMq(string host = null, MqConfig? config = null)
         {
-            _channelProvider = new ChannelProvider(host, config);
+            InitConfigs(config);
+            
+            _channelProvider = new ChannelProvider(host, _mqConfig.ChannelConfig);
 
-            Queues = new QueuesFacade(_channelProvider, ConfigFactory.GetQueueConfig());
+            Queues = new QueuesFacade(_channelProvider, _mqConfig.QueueConfig);
             Messages = new MessageFacade(_channelProvider);
-            Exchange = new ExchangeFacade(_channelProvider, ConfigFactory.GetExchangeConfig());
+            Exchange = new ExchangeFacade(_channelProvider, _mqConfig.ExchangeConfig);
         }
 
+        private void InitConfigs(MqConfig? @in)
+        {
+            _mqConfig = @in ?? new MqConfig
+            {
+                ChannelConfig = ConfigFactory.GetChannelConfig(),
+                ExchangeConfig = ConfigFactory.GetExchangeConfig(),
+                QueueConfig = ConfigFactory.GetQueueConfig()
+            };
+        }
+
+        private void UpdateConfigs(ChannelConfig value)
+        {
+            _mqConfig.ChannelConfig = value;
+            _channelProvider.ChannelConfig = value;
+        }
+        
         public void Dispose()
         {
             ChannelFactory.Dispose();

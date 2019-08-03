@@ -1,6 +1,6 @@
 namespace Infrastructure.Brokers.RabbitMq.Contracts.Configs
 {
-    public class ExchangeConfig
+    public struct ExchangeConfig
     {
         /// <summary>
         /// Resistant to Rabbit MQ Failures (Save messages to drive)
