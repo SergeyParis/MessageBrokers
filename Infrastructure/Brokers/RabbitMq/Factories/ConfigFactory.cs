@@ -25,7 +25,7 @@ namespace Infrastructure.Brokers.RabbitMq.Factories
 
         public static QueueConfig GetQueueConfig(bool isDurable) => new QueueConfig
         {
-            IsDurable = isDurable
+            Durable = isDurable
         };
 
         public static QueueConfig GetQueueConfig() => GetQueueConfig(false);

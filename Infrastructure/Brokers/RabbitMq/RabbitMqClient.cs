@@ -68,7 +68,7 @@ namespace Infrastructure.Brokers.RabbitMq
         {
             var channel = GetChannelInfo().Channel;
             var config = queueConfig ?? _defaultQueueConfig;
-            channel.QueueDeclare(queueName, config.IsDurable, false, false, null);
+            channel.QueueDeclare(queueName, config.Durable, false, false, null);
         }
 
         public void ClearQueue(string queueName)
@@ -122,7 +122,7 @@ namespace Infrastructure.Brokers.RabbitMq
             };
             _defaultQueueConfig = new QueueConfig
             {
-                IsDurable = false
+                Durable = false
             };
         }
         

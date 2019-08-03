@@ -5,6 +5,6 @@ namespace Infrastructure.Brokers.RabbitMq.Contracts.Configs
         /// <summary>
         /// Resistant to Rabbit MQ Failures (Save messages to drive)
         /// </summary>
-        public bool IsDurable { get; set; }
+        public bool Durable { get; set; }
     }
 }

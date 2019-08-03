@@ -19,7 +19,7 @@ namespace Infrastructure.Brokers.RabbitMq.Facades.Impl
         
         public void CreateQueue(string queueName)
         {
-            MqChannel.QueueDeclare(queueName, QueueConfig.IsDurable, false, false, null);
+            MqChannel.QueueDeclare(queueName, QueueConfig.Durable, false, false, null);
         }
         
         public void ClearQueue(string queueName)

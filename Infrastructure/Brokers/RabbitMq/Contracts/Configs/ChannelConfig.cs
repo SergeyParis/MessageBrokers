@@ -3,7 +3,7 @@ namespace Infrastructure.Brokers.RabbitMq.Contracts.Configs
     public struct ChannelConfig
     {
         /// <summary>
-        /// Mark that ack will send directly after getting a message from the queue (without manual ack)
+        /// Mark that ack (acknowledge) will send directly after getting a message from the queue (without manual ack)
         /// </summary>
         public bool AutoAck { get; set; }
         /// <summary>
