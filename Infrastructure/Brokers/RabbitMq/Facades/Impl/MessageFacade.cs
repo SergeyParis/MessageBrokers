@@ -17,7 +17,7 @@ namespace Infrastructure.Brokers.RabbitMq.Facades.Impl
             MqChannel.BasicPublish(exchangeName, routingKey, null, body);
         }
         
-        public void PublishMessage(byte[] body, string routingKey) => PublishMessage(body, routingKey, string.Empty);
+        public void PublishMessageToDefaultExchange(byte[] body, string routingKey) => PublishMessage(body, routingKey, string.Empty);
 
         public void Ack(BasicDeliverEventArgs args)
         {

@@ -4,7 +4,9 @@ namespace Infrastructure.Brokers.RabbitMq.Facades
 {
     public interface IMessageFacade
     {
-        void PublishMessage(byte[] body, string routingKey);
+        void PublishMessage(byte[] body, string routingKey, string exchangeName);
+        
+        void PublishMessageToDefaultExchange(byte[] body, string routingKey);
         
         void Ack(BasicDeliverEventArgs args);
         
