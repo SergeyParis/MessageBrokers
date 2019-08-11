@@ -2,6 +2,7 @@
 using System.Threading;
 using Infrastructure;
 using Infrastructure.Brokers.RabbitMq;
+using Infrastructure.Brokers.RabbitMq.Contracts.Configs;
 
 namespace Consumer1
 {

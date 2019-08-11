@@ -16,13 +16,21 @@ namespace Infrastructure.Brokers.RabbitMq.Facades.Impl
         {
             MqChannel.BasicPublish(exchangeName, routingKey, null, body);
         }
-        
-        public void PublishMessageToDefaultExchange(byte[] body, string routingKey) => PublishMessage(body, routingKey, string.Empty);
 
-        public void Ack(BasicDeliverEventArgs args)
+        public void PublishMessageToDefaultExchange(byte[] body, string routingKey) =>
+            PublishMessage(body, routingKey, string.Empty);
+
+        public void Ack(BasicDeliverEventArgs args, IModel channel)
         {
-            MqChannel.BasicAck(args.DeliveryTag, false);
+            channel.BasicAck(args.DeliveryTag, false);
         }
+
+        public void Ack(BasicDeliverEventArgs args) => Ack(args, MqChannel);
+
+        public void Ack(ulong deliveryTag, IModel channel) =>
+            Ack(new BasicDeliverEventArgs {DeliveryTag = deliveryTag}, channel);
+        
+        public void Ack(ulong deliveryTag) => Ack(deliveryTag, MqChannel);
 
         public byte[] WaitMessageFromQueue(string queueName)
         {
