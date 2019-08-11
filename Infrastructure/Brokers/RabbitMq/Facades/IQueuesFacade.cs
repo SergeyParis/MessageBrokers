@@ -1,4 +1,5 @@
 using System;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 namespace Infrastructure.Brokers.RabbitMq.Facades
@@ -11,6 +12,6 @@ namespace Infrastructure.Brokers.RabbitMq.Facades
 
         void DeleteQueue(string queueName);
 
-        void SubscribeOnQueue(Action<object, BasicDeliverEventArgs> handler, string queueName);
+        void SubscribeOnQueue(Action<IModel, BasicDeliverEventArgs> handler, string queueName);
     }
 }

@@ -32,10 +32,10 @@ namespace Infrastructure.Brokers.RabbitMq.Facades.Impl
             MqChannel.QueueDelete(queueName);
         }
 
-        public void SubscribeOnQueue(Action<object, BasicDeliverEventArgs> handler, string queueName)
+        public void SubscribeOnQueue(Action<IModel, BasicDeliverEventArgs> handler, string queueName)
         {
             var consumer = new EventingBasicConsumer(MqChannel);
-            consumer.Received += (model, args) => handler(model, args);
+            consumer.Received += (channel, args) => handler(MqChannel, args);
 
             MqChannel.BasicConsume(queueName, MqChannelConfig.AutoAck, consumer);
         }
