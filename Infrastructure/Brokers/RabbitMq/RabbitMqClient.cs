@@ -12,18 +12,18 @@ namespace Infrastructure.Brokers.RabbitMq
     public class RabbitMqClient : IDisposable
     {
         private const string LocalHostName = "localhost";
-        
+
         private readonly IConnection _connection;
         private readonly Dictionary<string, ChannelInfo> _channels;
 
-        private ChannelConfig _channelConfig; 
+        private ChannelConfig _channelConfig;
         private QueueConfig _defaultQueueConfig;
 
         public RabbitMqClient(string host = LocalHostName, ChannelConfig? channelConfig = null)
         {
             _channels = new Dictionary<string, ChannelInfo>();
             InitConfig(channelConfig);
-            
+
             var factory = new ConnectionFactory {HostName = host};
             _connection = factory.CreateConnection();
         }
@@ -33,20 +33,21 @@ namespace Infrastructure.Brokers.RabbitMq
             GetChannelInfo().Channel.BasicPublish("", routingKey, null, body);
         }
 
-        public void SubscribeOnQueue(Action<object, BasicDeliverEventArgs> handler, string queueName)
+        public void SubscribeOnQueue(Action<IModel, BasicDeliverEventArgs> handler, string queueName)
         {
             var channelInfo = GetChannelInfo();
             var channel = channelInfo.Channel;
-            
-            var consumer = new EventingBasicConsumer(channel);
-            consumer.Received += (model, args) => handler(model, args);
 
+            var consumer = new EventingBasicConsumer(channel);
+            consumer.Received += (ch, args) => handler(channel, args);
+            
             channel.BasicConsume(queueName, channelInfo.Config.AutoAck, consumer);
         }
 
-        public void Ack(BasicDeliverEventArgs args)
+        public void Ack(BasicDeliverEventArgs args) => Ack(args, GetChannelInfo().Channel);
+
+        public void Ack(BasicDeliverEventArgs args, IModel channel)
         {
-            var channel = GetChannelInfo().Channel;
             channel.BasicAck(args.DeliveryTag, false);
         }
 
@@ -80,14 +81,14 @@ namespace Infrastructure.Brokers.RabbitMq
         {
             GetChannelInfo().Channel.QueueDelete(queueName);
         }
-        
+
         public void Dispose()
         {
             _connection?.Dispose();
             foreach (var channel in _channels)
                 channel.Value.Channel.Dispose();
         }
-        
+
         private ChannelInfo GetChannelInfo()
         {
             // channel - program connection to Rabbit MQ (new channel must create for new threads)
@@ -104,10 +105,10 @@ namespace Infrastructure.Brokers.RabbitMq
                     Channel = _connection.CreateModel(),
                     Config = _channelConfig
                 };
-                
+
                 _channels.Add(channelName, channel);
             }
-            
+
             ConfigureChannel(channel);
             return channel;
         }
@@ -125,7 +126,7 @@ namespace Infrastructure.Brokers.RabbitMq
                 Durable = false
             };
         }
-        
+
         private void ConfigureChannel(ChannelInfo channel)
         {
             channel.Channel.BasicQos(0, (ushort) channel.Config.PrefetchCount, false);

@@ -3,6 +3,8 @@ using System.Threading;
 using Infrastructure;
 using Infrastructure.Brokers.RabbitMq;
 using Infrastructure.Brokers.RabbitMq.Contracts.Configs;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 
 namespace Consumer1
 {
@@ -17,14 +19,14 @@ namespace Consumer1
             var rabbit = new RabbitMqClient();
             rabbit.CreateQueue(QueueName);
             
-            rabbit.SubscribeOnQueue((model, arg) =>
+            rabbit.SubscribeOnQueue((channel, arg) =>
             {
                 var message = arg.Body.TransformToString();
                 
                 Thread.Sleep(2000);
                 Console.WriteLine($" [{message}] Done");
-                
-                rabbit.Ack(arg);
+
+                rabbit.Ack(arg, channel);
             }, QueueName);
         }
     }
